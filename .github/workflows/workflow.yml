@@ -1,0 +1,28 @@
+jobs:
+  build:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system:
+        - windows-2019
+        - windows-2016
+        - ubuntu-20.04
+        - ubuntu-18.04
+        - macos-11.0
+        - macos-10.15
+        php:
+        - 5.6
+        - 7.0
+        - 7.1
+        - 7.2
+        - 7.3
+        - 7.4
+        - 8.0
+    steps:
+      - uses: actions/checkout@master
+      - uses: nanasess/setup-php@master
+        with:
+          php-version: ${{ matrix.php }}
+      - run: mkdir -p test_results
+      - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
+      - run: grep -E "^\s*Lines:\s*100.00%\s*\([0-9]+\/[0-9]+\)$$" php/framework/test_results/unit
