@@ -21,9 +21,9 @@ jobs:
         - 7.4
         - 8.0
         exclude:
-        - windows-2019: 3.7
+        - operating-system: windows-2019
           php: 5.6
-        - windows-2016: 3.7
+        - operating-system: windows-2016
           php: 5.6
     steps:
       - uses: actions/checkout@master
