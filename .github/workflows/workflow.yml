@@ -22,10 +22,10 @@ jobs:
         - 8.0
     steps:
       - uses: actions/checkout@master
-      - uses: nanasess/setup-php@master
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-      - run: sudo phpenmod xdebug
+          coverage: xdebug
       - run: composer install
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
