@@ -25,6 +25,7 @@ jobs:
       - uses: nanasess/setup-php@master
         with:
           php-version: ${{ matrix.php }}
+      - run: composer install
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
       - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*$" test_results/unit
