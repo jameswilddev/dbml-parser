@@ -7,19 +7,19 @@ jobs:
       matrix:
         operating-system:
         - windows-2019
-        - windows-2016
-        - ubuntu-20.04
-        - ubuntu-18.04
-        # - macos-11.0
-        - macos-10.15
+        # - windows-2016
+        # - ubuntu-20.04
+        # - ubuntu-18.04
+        # # - macos-11.0
+        # - macos-10.15
         php:
         - 5.6
-        - 7.0
-        - 7.1
-        - 7.2
-        - 7.3
-        - 7.4
-        - 8.0
+        # - 7.0
+        # - 7.1
+        # - 7.2
+        # - 7.3
+        # - 7.4
+        # - 8.0
     steps:
       - uses: actions/checkout@master
       - uses: shivammathur/setup-php@v2
@@ -30,7 +30,7 @@ jobs:
       # Dependency patches for PHP5.6.
       - run: rm composer.lock
         if: ${{ matrix.php == '5.6' }}
-      - run: composer require --dev phpunit/phpunit:^5.0.0
+      - run: composer require --dev phpunit/phpunit:^4.0.0
         if: ${{ matrix.php == '5.6' }}
 
       # Dependency patches for PHP7.0.
