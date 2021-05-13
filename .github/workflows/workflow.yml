@@ -54,17 +54,5 @@ jobs:
       - run: composer install
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
-      - run: cat test_results/unit
-      - run: grep -E "^" test_results/unit
-      - run: grep -E "^\s*" test_results/unit
-      - run: grep -E "^\s*Lines:" test_results/unit
-      - run: grep -E "^\s*Lines:\s*" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\(" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*" test_results/unit
-      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*$" test_results/unit
+      - run: dos2unix -ic test_results/unit
+      - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*\r?$" test_results/unit
