@@ -25,6 +25,7 @@ jobs:
       - uses: nanasess/setup-php@master
         with:
           php-version: ${{ matrix.php }}
+      - run: phpenmod xdebug
       - run: composer install
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
