@@ -44,7 +44,7 @@ final class StringLiteralEvent
     $this->startLine = $startLine;
     $this->startColumn = $startColumn;
     $this->endLine = $endLine;
-    $this->$endColumn = $endColumn;
+    $this->endColumn = $endColumn;
     $this->content = $content;
   }
 }
