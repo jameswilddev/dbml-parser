@@ -95,6 +95,22 @@ final class MultiTokenizerTarget implements TokenizerTarget
   }
 
   /**
+   * Handle a backtick-delimited string literal.
+   *
+   * @param integer $startLine The line number on which the backtick-delimited string literal started.
+   * @param integer $startColumn The column number on which the backtick-delimited string literal started.
+   * @param integer $endLine The line number on which the backtick-delimited string literal ended.
+   * @param integer $endColumn The column number on which the backtick-delimited string literal ended.
+   * @param string $content The content of the backtick-delimited string literal.
+   */
+  public function backtickStringLiteral($startLine, $startColumn, $endLine, $endColumn, $content)
+  {
+    foreach ($this->targets as $target) {
+      $target->backtickStringLiteral($startLine, $startColumn, $endLine, $endColumn, $content);
+    }
+  }
+
+  /**
    * Handle an unknown sequence of characters.
    *
    * @param integer $startLine The line number on which the unknown sequence of characters started.

@@ -4,6 +4,7 @@ namespace JamesWildDev\DBMLParser\Tests\Unit\Tokenization;
 
 use JamesWildDev\DBMLParser\Tokenization\MultiTokenizerTarget;
 use JamesWildDev\DBMLParser\Tokenization\Logging\LogTokenizerTarget;
+use JamesWildDev\DBMLParser\Tokenization\Logging\BacktickStringLiteralEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\EndOfFileEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\LineCommentEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\QuotedTokenEvent;
@@ -47,6 +48,7 @@ final class MultiTokenizerTargetTest extends TestCase
     $multiTokenizerTarget->quotedToken(67, 13, 24, 'Test Quoted Token Content');
     $multiTokenizerTarget->stringLiteral(22, 40, 88, 35, 'Test String Literal Content');
     $multiTokenizerTarget->endOfFile(52, 61);
+    $multiTokenizerTarget->backtickStringLiteral(108, 47, 21, 45, 'Test Backtick String Literal Content');
     $multiTokenizerTarget->lineComment(52, 51, 46, 'Test Line Comment Content');
 
     $this->assertEquals([
@@ -55,6 +57,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
+      new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),
       new LineCommentEvent(52, 51, 46, 'Test Line Comment Content'),
     ], $targetA->events);
     $this->assertEquals([
@@ -63,6 +66,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
+      new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),
       new LineCommentEvent(52, 51, 46, 'Test Line Comment Content'),
     ], $targetB->events);
     $this->assertEquals([
@@ -71,6 +75,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
+      new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),
       new LineCommentEvent(52, 51, 46, 'Test Line Comment Content'),
     ], $targetC->events);
   }
