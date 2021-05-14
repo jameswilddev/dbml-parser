@@ -9,11 +9,11 @@ final class QuotedTokenEventTest extends TestCase
 {
   public function test()
   {
-    $tokenEvent = new QuotedTokenEvent(31, 25, 84, 'Test Quoted Token Content');
+    $quotedTokenEvent = new QuotedTokenEvent(31, 25, 84, 'Test Quoted Token Content');
 
-    $this->assertEquals(31, $tokenEvent->line);
-    $this->assertEquals(25, $tokenEvent->startColumn);
-    $this->assertEquals(84, $tokenEvent->endColumn);
-    $this->assertEquals('Test Quoted Token Content', $tokenEvent->content);
+    $this->assertEquals(31, $quotedTokenEvent->line);
+    $this->assertEquals(25, $quotedTokenEvent->startColumn);
+    $this->assertEquals(84, $quotedTokenEvent->endColumn);
+    $this->assertEquals('Test Quoted Token Content', $quotedTokenEvent->content);
   }
 }
