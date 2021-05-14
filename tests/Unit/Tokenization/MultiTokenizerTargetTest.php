@@ -11,6 +11,7 @@ use JamesWildDev\DBMLParser\Tokenization\Logging\QuotedTokenEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\StringLiteralEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\TokenEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\UnknownEvent;
+use JamesWildDev\DBMLParser\Tokenization\Logging\WhiteSpaceEvent;
 use PHPUnit\Framework\TestCase;
 
 final class MultiTokenizerTargetTest extends TestCase
@@ -46,6 +47,7 @@ final class MultiTokenizerTargetTest extends TestCase
     $multiTokenizerTarget->token(31, 25, 84, 'Test Token Content');
     $multiTokenizerTarget->unknown(20, 63, 99, 65, 'Test Unknown Content');
     $multiTokenizerTarget->quotedToken(67, 13, 24, 'Test Quoted Token Content');
+    $multiTokenizerTarget->whiteSpace(44, 23, 72, 11, 'Test White Space Content');
     $multiTokenizerTarget->stringLiteral(22, 40, 88, 35, 'Test String Literal Content');
     $multiTokenizerTarget->endOfFile(52, 61);
     $multiTokenizerTarget->backtickStringLiteral(108, 47, 21, 45, 'Test Backtick String Literal Content');
@@ -55,6 +57,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new TokenEvent(31, 25, 84, 'Test Token Content'),
       new UnknownEvent(20, 63, 99, 65, 'Test Unknown Content'),
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
+      new WhiteSpaceEvent(44, 23, 72, 11, 'Test White Space Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
       new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),
@@ -64,6 +67,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new TokenEvent(31, 25, 84, 'Test Token Content'),
       new UnknownEvent(20, 63, 99, 65, 'Test Unknown Content'),
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
+      new WhiteSpaceEvent(44, 23, 72, 11, 'Test White Space Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
       new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),
@@ -73,6 +77,7 @@ final class MultiTokenizerTargetTest extends TestCase
       new TokenEvent(31, 25, 84, 'Test Token Content'),
       new UnknownEvent(20, 63, 99, 65, 'Test Unknown Content'),
       new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
+      new WhiteSpaceEvent(44, 23, 72, 11, 'Test White Space Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
       new BacktickStringLiteralEvent(108, 47, 21, 45, 'Test Backtick String Literal Content'),

@@ -93,6 +93,20 @@ final class LogTokenizerTarget implements TokenizerTarget
   }
 
   /**
+   * Handle white space.
+   *
+   * @param integer $startLine The line number on which the white space started.
+   * @param integer $startColumn The column number on which the white space started.
+   * @param integer $endLine The line number on which the white space ended.
+   * @param integer $endColumn The column number on which the white space ended.
+   * @param string $content The content of the white space.
+   */
+  public function whiteSpace($startLine, $startColumn, $endLine, $endColumn, $content)
+  {
+    $this->events []= new WhiteSpaceEvent($startLine, $startColumn, $endLine, $endColumn, $content);
+  }
+
+  /**
    * Handle an unknown sequence of characters.
    *
    * @param integer $startLine The line number on which the unknown sequence of characters started.
