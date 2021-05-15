@@ -35,11 +35,15 @@ jobs:
       # Dependency patches for PHP5.6.
       - run: rm composer.lock
         if: ${{ matrix.php == '5.6' }}
+      - run: composer.phar --dev vimeo/psalm phpunit/phpunit
+        if: ${{ matrix.php == '5.6' }}
       - run: composer require --dev phpunit/phpunit:^5.0.0
         if: ${{ matrix.php == '5.6' }}
 
       # Dependency patches for PHP7.0.
       - run: rm composer.lock
+        if: ${{ matrix.php == '7.0' }}
+      - run: composer.phar --dev vimeo/psalm phpunit/phpunit
         if: ${{ matrix.php == '7.0' }}
       - run: composer require --dev phpunit/phpunit:^6.5.0
         if: ${{ matrix.php == '7.0' }}
@@ -57,7 +61,7 @@ jobs:
         if: ${{ matrix.php == '7.2' }}
 
       - run: composer install
-      - run: vendor/bin/psalm
+      - run: test -f vendor/bin/psalm && vendor/bin/psalm
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
       - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*$" test_results/unit
