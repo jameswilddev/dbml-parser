@@ -35,7 +35,7 @@ jobs:
       # Dependency patches for PHP5.6.
       - run: rm composer.lock
         if: ${{ matrix.php == '5.6' }}
-      - run: composer.phar --dev vimeo/psalm phpunit/phpunit
+      - run: composer remove --dev vimeo/psalm phpunit/phpunit
         if: ${{ matrix.php == '5.6' }}
       - run: composer require --dev phpunit/phpunit:^5.0.0
         if: ${{ matrix.php == '5.6' }}
@@ -43,7 +43,7 @@ jobs:
       # Dependency patches for PHP7.0.
       - run: rm composer.lock
         if: ${{ matrix.php == '7.0' }}
-      - run: composer.phar --dev vimeo/psalm phpunit/phpunit
+      - run: composer remove --dev vimeo/psalm phpunit/phpunit
         if: ${{ matrix.php == '7.0' }}
       - run: composer require --dev phpunit/phpunit:^6.5.0
         if: ${{ matrix.php == '7.0' }}
