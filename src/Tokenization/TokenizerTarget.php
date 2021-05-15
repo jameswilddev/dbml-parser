@@ -36,16 +36,6 @@ interface TokenizerTarget
   public function token($line, $startColumn, $endColumn, $content);
 
   /**
-   * Handle a double-quoted token which is likely an identifier.
-   *
-   * @param integer $line The line number on which the double-quoted token was found.
-   * @param integer $startColumn The column number on which the double-quoted token started.
-   * @param integer $endColumn The column number on which the double-quoted token ended.
-   * @param string $content The content of the double-quoted token.
-   */
-  public function quotedToken($line, $startColumn, $endColumn, $content);
-
-  /**
    * Handle a string literal.
    *
    * @param integer $startLine The line number on which the string literal started.

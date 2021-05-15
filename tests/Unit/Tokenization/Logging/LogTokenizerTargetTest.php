@@ -6,7 +6,6 @@ use JamesWildDev\DBMLParser\Tokenization\Logging\LogTokenizerTarget;
 use JamesWildDev\DBMLParser\Tokenization\Logging\BacktickStringLiteralEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\EndOfFileEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\LineCommentEvent;
-use JamesWildDev\DBMLParser\Tokenization\Logging\QuotedTokenEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\StringLiteralEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\TokenEvent;
 use JamesWildDev\DBMLParser\Tokenization\Logging\UnknownEvent;
@@ -28,7 +27,6 @@ final class LogTokenizerTargetTest extends TestCase
 
     $logTokenizerTarget->token(31, 25, 84, 'Test Token Content');
     $logTokenizerTarget->unknown(20, 63, 99, 65, 'Test Unknown Content');
-    $logTokenizerTarget->quotedToken(67, 13, 24, 'Test Quoted Token Content');
     $logTokenizerTarget->whiteSpace(44, 23, 72, 11, 'Test White Space Content');
     $logTokenizerTarget->stringLiteral(22, 40, 88, 35, 'Test String Literal Content');
     $logTokenizerTarget->endOfFile(52, 61);
@@ -38,7 +36,6 @@ final class LogTokenizerTargetTest extends TestCase
     $this->assertEquals([
       new TokenEvent(31, 25, 84, 'Test Token Content'),
       new UnknownEvent(20, 63, 99, 65, 'Test Unknown Content'),
-      new QuotedTokenEvent(67, 13, 24, 'Test Quoted Token Content'),
       new WhiteSpaceEvent(44, 23, 72, 11, 'Test White Space Content'),
       new StringLiteralEvent(22, 40, 88, 35, 'Test String Literal Content'),
       new EndOfFileEvent(52, 61),
