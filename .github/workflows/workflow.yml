@@ -61,7 +61,8 @@ jobs:
         if: ${{ matrix.php == '7.2' }}
 
       - run: composer install
-      - run: test -f vendor/bin/psalm && vendor/bin/psalm
+      - run: vendor/bin/psalm
+        if: hashFiles('vendor/bin/psalm') != ''
       - run: mkdir -p test_results
       - run: vendor/bin/phpunit --whitelist src --coverage-text tests/ | tee test_results/unit
       - run: grep -E "^\s*Lines:\s*100\.00%\s*\([0-9]+\/[0-9]+\)\s*$" test_results/unit
