@@ -223,6 +223,7 @@ class Tokenizer
       case '<':
       case '>':
       case '-':
+      case ',':
         return true;
 
       default:

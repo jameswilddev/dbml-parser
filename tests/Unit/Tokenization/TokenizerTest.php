@@ -33,7 +33,7 @@ final class TokenizerTest extends TestCase
     $tokenizer = new Tokenizer($logTokenizerTarget);
 
     foreach (str_split(preg_replace("~\r?\n~", $newline, "
-  tokens}can:be-split<by>various[symbols]as(seen)here{''
+  tokens}can:be-split<by>various[symbols]as(seen)here{or,here''
 you can also write'single-quoted // strings\\
 with or without backslashes \\\\ for newlines
 (containing them)'or 'single-quote\\d \'strings\' surrounded by white space' like that
@@ -130,8 +130,11 @@ this line contains a fa/ke comment
       new TokenEvent(2, 49, 49, ')'),
       new TokenEvent(2, 50, 53, 'here'),
       new TokenEvent(2, 54, 54, '{'),
-      new StringLiteralEvent(2, 55, 2, 56, ''),
-      new WhiteSpaceEvent(2, 57, 2, 57, $newline),
+      new TokenEvent(2, 55, 56, 'or'),
+      new TokenEvent(2, 57, 57, ','),
+      new TokenEvent(2, 58, 61, 'here'),
+      new StringLiteralEvent(2, 62, 2, 63, ''),
+      new WhiteSpaceEvent(2, 64, 2, 64, $newline),
       new TokenEvent(3, 1, 3, 'you'),
       new WhiteSpaceEvent(3, 4, 3, 4, ' '),
       new TokenEvent(3, 5, 7, 'can'),
