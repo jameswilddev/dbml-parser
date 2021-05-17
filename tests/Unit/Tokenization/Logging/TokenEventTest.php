@@ -10,7 +10,7 @@ final class TokenEventTest extends TestCase
 {
   public function test()
   {
-    $tokenEvent = new TokenEvent(TokenType::WHITE_SPACE, 31, 25, 88, 84, 'Test Token Content');
+    $tokenEvent = new TokenEvent(TokenType::WHITE_SPACE, 31, 25, 88, 84, 'Test Token Content', 'Test Token Raw');
 
     $this->assertEquals(TokenType::WHITE_SPACE, $tokenEvent->type);
     $this->assertEquals(31, $tokenEvent->startLine);
@@ -18,5 +18,6 @@ final class TokenEventTest extends TestCase
     $this->assertEquals(88, $tokenEvent->endLine);
     $this->assertEquals(84, $tokenEvent->endColumn);
     $this->assertEquals('Test Token Content', $tokenEvent->content);
+    $this->assertEquals('Test Token Raw', $tokenEvent->raw);
   }
 }

@@ -38,14 +38,20 @@ final class TokenEvent
   public $content;
 
   /**
+   * @var string $raw The exact sequence of characters which were interpreted as this token.
+   */
+  public $raw;
+
+  /**
    * @param integer $type The type of the token (see TokenType::*).
    * @param integer $startLine The line number on which the token started.
    * @param integer $startColumn The column number on which the token started.
    * @param integer $endLine The line number on which the token ended.
    * @param integer $endColumn The column number on which the token ended.
    * @param string $content The content of the token.
+   * @param string $raw The exact sequence of characters which were interpreted as this token.
    */
-  function __construct($type, $startLine, $startColumn, $endLine, $endColumn, $content)
+  function __construct($type, $startLine, $startColumn, $endLine, $endColumn, $content, $raw)
   {
     $this->type = $type;
     $this->startLine = $startLine;
@@ -53,5 +59,6 @@ final class TokenEvent
     $this->endLine = $endLine;
     $this->endColumn = $endColumn;
     $this->content = $content;
+    $this->raw = $raw;
   }
 }

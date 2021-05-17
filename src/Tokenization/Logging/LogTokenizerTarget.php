@@ -34,9 +34,10 @@ final class LogTokenizerTarget implements TokenizerTarget
    * @param integer $endLine The line number on which the token ended.
    * @param integer $endColumn The column number on which the token ended.
    * @param string $content The content of the token.
+   * @param string $raw The exact sequence of characters which were interpreted as this token.
    */
-  public function token($type, $startLine, $startColumn, $endLine, $endColumn, $content)
+  public function token($type, $startLine, $startColumn, $endLine, $endColumn, $content, $raw)
   {
-    $this->events []= new TokenEvent($type, $startLine, $startColumn, $endLine, $endColumn, $content);
+    $this->events []= new TokenEvent($type, $startLine, $startColumn, $endLine, $endColumn, $content, $raw);
   }
 }

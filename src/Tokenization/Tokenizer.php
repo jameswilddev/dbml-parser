@@ -415,7 +415,7 @@ class Tokenizer
           $this->contentString = $character;
           $this->state = self::STATE_WHITE_SPACE;
         } else if ($this->characterIsSymbol($character)) {
-          $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->line, $this->column, $this->line, $this->column, $character);
+          $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->line, $this->column, $this->line, $this->column, $character, $character);
         } else if ($this->characterIsSingleQuote($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
@@ -448,7 +448,7 @@ class Tokenizer
         if ($this->characterIsWhiteSpace($character)) {
           $this->contentString .= $character;
         } else {
-          $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+          $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
           $this->state = self::STATE_BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
@@ -456,7 +456,7 @@ class Tokenizer
 
       case self::STATE_TOKEN:
         if ($this->characterIsWhiteSpace($character) || $this->characterIsSymbol($character) || $this->characterIsSingleQuote($character) || $this->characterIsForwardSlash($character) || $this->characterIsDoubleQuote($character) || $this->characterIsBacktick($character)) {
-          $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+          $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
           $this->state = self::STATE_BETWEEN_TOKENS;
           $this->advanceParserState($character);
         } else {
@@ -481,7 +481,7 @@ class Tokenizer
           $this->leastIndentation = null;
           $this->state = self::STATE_TRIPLE_QUOTED_STRING;
         } else {
-          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '');
+          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '', substr($this->raw, 0, -1));
           $this->state = self::STATE_BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
@@ -489,7 +489,7 @@ class Tokenizer
 
       case self::STATE_SINGLE_QUOTED_STRING:
         if ($this->characterIsSingleQuote($character)) {
-          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString);
+          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = self::STATE_BETWEEN_TOKENS;
         } else if ($this->characterIsBackslash($character)) {
           $this->state = self::STATE_SINGLE_QUOTED_STRING_BACKSLASH;
@@ -512,7 +512,7 @@ class Tokenizer
         if ($this->characterIsBackslash($character)) {
           $this->state = self::STATE_DOUBLE_QUOTED_STRING_BACKSLASH;
         } else if ($this->characterIsDoubleQuote($character)) {
-          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString);
+          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = self::STATE_BETWEEN_TOKENS;
         } else {
           $this->contentString .= $character;
@@ -579,7 +579,7 @@ class Tokenizer
           } else {
             $contentString = implode('', $contentArray);
           }
-          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $contentString);
+          $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $contentString, $this->raw);
           $this->state = self::STATE_BETWEEN_TOKENS;
         } else {
           $this->contentArray []= '\'\'';
@@ -590,7 +590,7 @@ class Tokenizer
 
       case self::STATE_BACKTICK_STRING:
         if ($this->characterIsBacktick($character)) {
-          $this->target->token(TokenType::BACKTICK_STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString);
+          $this->target->token(TokenType::BACKTICK_STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = self::STATE_BETWEEN_TOKENS;
         } else {
           $this->contentString .= $character;
@@ -602,7 +602,7 @@ class Tokenizer
           $this->contentString = '';
           $this->state = self::STATE_LINE_COMMENT;
         } else {
-          $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->startLine, $this->startColumn, '/');
+          $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->startLine, $this->startColumn, '/', substr($this->raw, 0, -1));
           $this->state = self::STATE_BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
@@ -610,7 +610,7 @@ class Tokenizer
 
       case self::STATE_LINE_COMMENT:
         if ($this->characterIsNewLine($character)) {
-          $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+          $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
           $this->state = self::STATE_BETWEEN_TOKENS;
           $this->advanceParserState($character);
         } else {
@@ -672,67 +672,67 @@ class Tokenizer
         break;
 
       case self::STATE_WHITE_SPACE:
-        $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+        $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
 
       case self::STATE_TOKEN:
-        $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+        $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
 
       case self::STATE_FIRST_SINGLE_QUOTE:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_SECOND_SINGLE_QUOTE:
-        $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '');
+        $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '', $this->raw);
         break;
 
       case self::STATE_SINGLE_QUOTED_STRING:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_SINGLE_QUOTED_STRING_BACKSLASH:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_DOUBLE_QUOTED_STRING:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_DOUBLE_QUOTED_STRING_BACKSLASH:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_TRIPLE_QUOTED_STRING:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_BACKTICK_STRING:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_FIRST_FORWARD_SLASH:
-        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw);
+        $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
       case self::STATE_LINE_COMMENT:
-        $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString);
+        $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
     }
 
