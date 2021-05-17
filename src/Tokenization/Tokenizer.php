@@ -2,6 +2,7 @@
 
 namespace JamesWildDev\DBMLParser\Tokenization;
 
+use JamesWildDev\DBMLParser\Tokenization\CharacterIs;
 use JamesWildDev\DBMLParser\Tokenization\TokenType;
 use JamesWildDev\DBMLParser\Tokenization\TokenizerState;
 
@@ -84,122 +85,6 @@ class Tokenizer
   }
 
   /**
-   * Determines whether a character is a carriage return.
-   * @param $character The character to check.
-   * @return bool True when the character is a carriage return, otherwise, false.
-   */
-  private function characterIsCarriageReturn($character)
-  {
-    return $character === "\r";
-  }
-
-  /**
-   * Determines whether a character is a line feed.
-   * @param $character The character to check.
-   * @return bool True when the character is a line feed, otherwise, false.
-   */
-  private function characterIsLineFeed($character)
-  {
-    return $character === "\n";
-  }
-
-  /**
-   * Determines whether a character is any kind of new line.
-   * @param $character The character to check.
-   * @return bool True when the character is a newline, otherwise, false.
-   */
-  private function characterIsNewLine($character)
-  {
-    return preg_match('/^\v$/', $character);
-  }
-
-  /**
-   * Determines whether a character constitutes white space.
-   * @param $character The character to check.
-   * @return bool True when the character constitutes white space, otherwise, false.
-   */
-  private function characterIsWhiteSpace($character)
-  {
-    return preg_match('/^\s$/', $character);
-  }
-
-  /**
-   * Determines whether a character is any kind of symbol.
-   * @param $character The character to check.
-   * @return bool True when the character is a symbol, otherwise, false.
-   */
-  private function characterIsSymbol($character)
-  {
-    switch ($character) {
-      case '[':
-      case ']':
-      case '(':
-      case ')':
-      case '{':
-      case '}':
-      case ':':
-      case '<':
-      case '>':
-      case '-':
-      case ',':
-        return true;
-
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Determines whether a character is a single quote.
-   * @param $character The character to check.
-   * @return bool True when the character is a single quote, otherwise, false.
-   */
-  private function characterIsSingleQuote($character)
-  {
-    return $character === '\'';
-  }
-
-  /**
-   * Determines whether a character is a double quote.
-   * @param $character The character to check.
-   * @return bool True when the character is a double quote, otherwise, false.
-   */
-  private function characterIsDoubleQuote($character)
-  {
-    return $character === '"';
-  }
-
-  /**
-   * Determines whether a character is a forward slash.
-   * @param $character The character to check.
-   * @return bool True when the character is a forward slash, otherwise, false.
-   */
-  private function characterIsForwardSlash($character)
-  {
-    return $character === '/';
-  }
-
-  /**
-   * Determines whether a character is a backslash.
-   * @param $character The character to check.
-   * @return bool True when the character is a backslash, otherwise, false.
-   */
-  private function characterIsBackslash($character)
-  {
-    return $character === '\\';
-  }
-
-  /**
-   * Determines whether a character is a backtick.
-   * @param $character The character to check.
-   * @return bool True when the character is a backtick, otherwise, false.
-   */
-  private function characterIsBacktick($character)
-  {
-    return $character === '`';
-  }
-
-  /**
    * Removes all blank lines from the start of an array of characters.
    * @param array $characters The array of characters to remove the leading blank lines from.
    * @return array The input array of characters, with all leading blank lines removed.
@@ -208,9 +93,9 @@ class Tokenizer
   {
     for ($i = 0; $i < count($characters); $i++) {
       $character = $characters[$i];
-      if ($this->characterIsNewLine($character)) {
+      if (CharacterIs::newLine($character)) {
         return $this->removeLeadingBlankLines(array_slice($characters, $i + 1));
-      } else if (! $this->characterIsWhiteSpace($character)) {
+      } else if (! CharacterIs::whiteSpace($character)) {
         return $characters;
       }
     }
@@ -227,9 +112,9 @@ class Tokenizer
   {
     for ($i = count($characters) - 1; $i >= 0; $i--) {
       $character = $characters[$i];
-      if ($this->characterIsNewLine($character)) {
+      if (CharacterIs::newLine($character)) {
         return $this->removeTrailingBlankLines(array_slice($characters, 0, $i));
-      } else if (! $this->characterIsWhiteSpace($character)) {
+      } else if (! CharacterIs::whiteSpace($character)) {
         return $characters;
       }
     }
@@ -249,7 +134,7 @@ class Tokenizer
     $foundNonWhiteSpace = false;
 
     foreach ($characters as $character) {
-      if ($this->characterIsNewLine($character)) {
+      if (CharacterIs::newLine($character)) {
         if ($foundNonWhiteSpace) {
           if ($output === null) {
             $output = $indentation;
@@ -261,7 +146,7 @@ class Tokenizer
         $indentation = 0;
         $foundNonWhiteSpace = false;
       } else if (! $foundNonWhiteSpace) {
-        if ($this->characterIsWhiteSpace($character)) {
+        if (CharacterIs::whiteSpace($character)) {
           $indentation++;
         } else {
           $foundNonWhiteSpace = true;
@@ -288,7 +173,7 @@ class Tokenizer
     $output = [];
 
     foreach ($characters as $character) {
-      if ($this->characterIsNewLine($character)) {
+      if (CharacterIs::newLine($character)) {
         $numberOfCharactersStillToRemoveOnThisLine = $numberOfCharactersToRemove;
         $output []= $character;
       } else if ($numberOfCharactersStillToRemoveOnThisLine > 0) {
@@ -309,7 +194,7 @@ class Tokenizer
   private function entirelyWhiteSpace($characters)
   {
     foreach ($characters as $character) {
-      if (! $this->characterIsWhiteSpace($character)) {
+      if (! CharacterIs::whiteSpace($character)) {
         return false;
       }
     }
@@ -325,27 +210,27 @@ class Tokenizer
   {
     switch ($this->state) {
       case TokenizerState::BETWEEN_TOKENS:
-        if ($this->characterIsWhiteSpace($character)) {
+        if (CharacterIs::whiteSpace($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = $character;
           $this->state = TokenizerState::WHITE_SPACE;
-        } else if ($this->characterIsSymbol($character)) {
+        } else if (CharacterIs::symbol($character)) {
           $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->line, $this->column, $this->line, $this->column, $character, $character);
-        } else if ($this->characterIsSingleQuote($character)) {
+        } else if (CharacterIs::singleQuote($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->state = TokenizerState::FIRST_SINGLE_QUOTE;
-        } else if ($this->characterIsForwardSlash($character)) {
+        } else if (CharacterIs::forwardSlash($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->state = TokenizerState::FIRST_FORWARD_SLASH;
-        } else if ($this->characterIsDoubleQuote($character)) {
+        } else if (CharacterIs::doubleQuote($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = '';
           $this->state = TokenizerState::DOUBLE_QUOTED_STRING;
-        } else if ($this->characterIsBacktick($character)) {
+        } else if (CharacterIs::backtick($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = '';
@@ -361,7 +246,7 @@ class Tokenizer
         break;
 
       case TokenizerState::WHITE_SPACE:
-        if ($this->characterIsWhiteSpace($character)) {
+        if (CharacterIs::whiteSpace($character)) {
           $this->contentString .= $character;
         } else {
           $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
@@ -371,7 +256,7 @@ class Tokenizer
         break;
 
       case TokenizerState::TOKEN:
-        if ($this->characterIsWhiteSpace($character) || $this->characterIsSymbol($character) || $this->characterIsSingleQuote($character) || $this->characterIsForwardSlash($character) || $this->characterIsDoubleQuote($character) || $this->characterIsBacktick($character)) {
+        if (CharacterIs::whiteSpace($character) || CharacterIs::symbol($character) || CharacterIs::singleQuote($character) || CharacterIs::forwardSlash($character) || CharacterIs::doubleQuote($character) || CharacterIs::backtick($character)) {
           $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
           $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
@@ -381,7 +266,7 @@ class Tokenizer
         break;
 
       case TokenizerState::FIRST_SINGLE_QUOTE:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $this->state = TokenizerState::SECOND_SINGLE_QUOTE;
         } else {
           $this->state = TokenizerState::SINGLE_QUOTED_STRING;
@@ -391,7 +276,7 @@ class Tokenizer
         break;
 
       case TokenizerState::SECOND_SINGLE_QUOTE:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $this->contentArray = [];
           $this->indentation = 0;
           $this->leastIndentation = null;
@@ -404,10 +289,10 @@ class Tokenizer
         break;
 
       case TokenizerState::SINGLE_QUOTED_STRING:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = TokenizerState::BETWEEN_TOKENS;
-        } else if ($this->characterIsBackslash($character)) {
+        } else if (CharacterIs::backslash($character)) {
           $this->state = TokenizerState::SINGLE_QUOTED_STRING_BACKSLASH;
         } else {
           $this->contentString .= $character;
@@ -415,7 +300,7 @@ class Tokenizer
         break;
 
       case TokenizerState::SINGLE_QUOTED_STRING_BACKSLASH:
-        if (!$this->characterIsSingleQuote($character)) {
+        if (!CharacterIs::singleQuote($character)) {
           $this->contentString .= '\\';
         }
 
@@ -425,9 +310,9 @@ class Tokenizer
         break;
 
       case TokenizerState::DOUBLE_QUOTED_STRING:
-        if ($this->characterIsBackslash($character)) {
+        if (CharacterIs::backslash($character)) {
           $this->state = TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH;
-        } else if ($this->characterIsDoubleQuote($character)) {
+        } else if (CharacterIs::doubleQuote($character)) {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
@@ -436,7 +321,7 @@ class Tokenizer
         break;
 
       case TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH:
-        if (! $this->characterIsDoubleQuote($character)) {
+        if (! CharacterIs::doubleQuote($character)) {
           $this->contentString .= '\\';
         }
 
@@ -445,9 +330,9 @@ class Tokenizer
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE;
-        } else if ($this->characterIsBackslash($character)) {
+        } else if (CharacterIs::backslash($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH;
         } else {
           $this->contentArray []= $character;
@@ -455,9 +340,9 @@ class Tokenizer
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH:
-        if ($this->characterIsCarriageReturn($character)) {
+        if (CharacterIs::carriageReturn($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN;
-        } else if ($this->characterIsNewLine($character)) {
+        } else if (CharacterIs::newLine($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         } else {
           $this->contentArray []= $character;
@@ -466,7 +351,7 @@ class Tokenizer
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
-        if (! $this->characterIsLineFeed($character)) {
+        if (! CharacterIs::lineFeed($character)) {
           $this->contentArray []= $character;
         }
 
@@ -474,7 +359,7 @@ class Tokenizer
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE;
         } else {
           $this->contentArray []= '\'';
@@ -484,7 +369,7 @@ class Tokenizer
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
-        if ($this->characterIsSingleQuote($character)) {
+        if (CharacterIs::singleQuote($character)) {
           $contentArray = $this->contentArray;
           $contentArray = $this->removeLeadingBlankLines($contentArray);
           $contentArray = $this->removeTrailingBlankLines($contentArray);
@@ -505,7 +390,7 @@ class Tokenizer
         break;
 
       case TokenizerState::BACKTICK_STRING:
-        if ($this->characterIsBacktick($character)) {
+        if (CharacterIs::backtick($character)) {
           $this->target->token(TokenType::BACKTICK_STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
           $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
@@ -514,7 +399,7 @@ class Tokenizer
         break;
 
       case TokenizerState::FIRST_FORWARD_SLASH:
-        if ($this->characterIsForwardSlash($character)) {
+        if (CharacterIs::forwardSlash($character)) {
           $this->contentString = '';
           $this->state = TokenizerState::LINE_COMMENT;
         } else {
@@ -525,7 +410,7 @@ class Tokenizer
         break;
 
       case TokenizerState::LINE_COMMENT:
-        if ($this->characterIsNewLine($character)) {
+        if (CharacterIs::newLine($character)) {
           $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
           $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
@@ -543,20 +428,20 @@ class Tokenizer
   private function advanceFilePosition($character)
   {
     // Track the line/column before advancing line position as if the next character ends the token we need to know which character was the last within that token.
-    if (! $this->followingCarriageReturn || ! $this->characterIsNewLine($character)) {
+    if (! $this->followingCarriageReturn || ! CharacterIs::newLine($character)) {
       $this->previousLine = $this->line;
       $this->previousColumn = $this->column;
     }
 
     // Carriage returns need to be handled differently to normal newline characters as CR LF should count as one newline not two.
-    if ($this->characterIsCarriageReturn($character)) {
+    if (CharacterIs::carriageReturn($character)) {
       $this->line++;
       $this->column = 1;
       $this->followingCarriageReturn = true;
     } else {
-      if ($this->characterIsLineFeed($character) && $this->followingCarriageReturn) {
+      if (CharacterIs::lineFeed($character) && $this->followingCarriageReturn) {
         // Do nothing.
-      } else if ($this->characterIsNewLine($character)) {
+      } else if (CharacterIs::newLine($character)) {
         $this->line++;
         $this->column = 1;
       } else {
