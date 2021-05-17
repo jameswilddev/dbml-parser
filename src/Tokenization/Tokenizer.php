@@ -3,97 +3,13 @@
 namespace JamesWildDev\DBMLParser\Tokenization;
 
 use JamesWildDev\DBMLParser\Tokenization\TokenType;
+use JamesWildDev\DBMLParser\Tokenization\TokenizerState;
 
 /**
  * Identifies tokens in a stream of characters.
  */
 class Tokenizer
 {
-  /**
-   * No characters are currently being aggregated.
-   */
-  const STATE_BETWEEN_TOKENS = 0;
-
-  /**
-   * One or more white space characters are currently being aggregated.
-   */
-  const STATE_WHITE_SPACE = 1;
-
-  /**
-   * One or more token characters are currently being aggregated.
-   */
-  const STATE_TOKEN = 2;
-
-  /**
-   * One single quote has been encountered.  This could be the start of a string literal, a multiline string literal or an unknown sequence of characters.
-   */
-  const STATE_FIRST_SINGLE_QUOTE = 3;
-
-  /**
-   * Two single quotes have been encountered.  This could be an empty string literal, a multiline string literal or an unknown sequence of characters.
-   */
-  const STATE_SECOND_SINGLE_QUOTE = 4;
-
-  /**
-   * A single-line string is being aggregated.
-   */
-  const STATE_SINGLE_QUOTED_STRING = 5;
-
-  /**
-   * A single-line string is being aggregated.  The previous character was a backslash.
-   */
-  const STATE_SINGLE_QUOTED_STRING_BACKSLASH = 6;
-
-  /**
-   * A double-quoted string is being aggregated.
-   */
-  const STATE_DOUBLE_QUOTED_STRING = 7;
-
-  /**
-   * A double-quoted string is being aggregated; a backslash has been encountered.
-   */
-  const STATE_DOUBLE_QUOTED_STRING_BACKSLASH = 8;
-
-  /**
-   * A triple-quoted string is being aggregated.  No non-white-space characters have been found yet.
-   */
-  const STATE_TRIPLE_QUOTED_STRING = 9;
-
-  /**
-   * A triple-quoted string is being aggregated; a backslash has been encountered.
-   */
-  const STATE_TRIPLE_QUOTED_STRING_BACKSLASH = 10;
-
-  /**
-   * A triple-quoted string is being aggregated; a backslash and a carriage return have been encountered.
-   */
-  const STATE_TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN = 11;
-
-  /**
-   * A triple-quoted string is being aggregated; a single quote has been encountered.
-   */
-  const STATE_TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE = 12;
-
-  /**
-   * A triple-quoted string is being aggregated; two single quotes have been encountered.
-   */
-  const STATE_TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE = 13;
-
-  /**
-   * A single-line string is being aggregated.
-   */
-  const STATE_BACKTICK_STRING = 14;
-
-  /**
-   * A forward slash has been found; if the next character is also a forward slash, this is a line comment.  It is otherwise an error.
-   */
-  const STATE_FIRST_FORWARD_SLASH = 15;
-
-  /**
-   * A line comment is being aggregated.
-   */
-  const STATE_LINE_COMMENT = 16;
-
   /**
    * @var TokenizerTarget $target Notified of all tokenization events.
    */
@@ -152,7 +68,7 @@ class Tokenizer
   /**
    * @var integer $state The current state (see STATE_*).
    */
-  private $state = self::STATE_BETWEEN_TOKENS;
+  private $state = TokenizerState::BETWEEN_TOKENS;
 
   /**
    * @var boolean $followingCarriageReturn Tracks whether the previous character was a carriage return to prevent double line counting on CR LF.
@@ -408,166 +324,166 @@ class Tokenizer
   private function advanceParserState($character)
   {
     switch ($this->state) {
-      case self::STATE_BETWEEN_TOKENS:
+      case TokenizerState::BETWEEN_TOKENS:
         if ($this->characterIsWhiteSpace($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = $character;
-          $this->state = self::STATE_WHITE_SPACE;
+          $this->state = TokenizerState::WHITE_SPACE;
         } else if ($this->characterIsSymbol($character)) {
           $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->line, $this->column, $this->line, $this->column, $character, $character);
         } else if ($this->characterIsSingleQuote($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
-          $this->state = self::STATE_FIRST_SINGLE_QUOTE;
+          $this->state = TokenizerState::FIRST_SINGLE_QUOTE;
         } else if ($this->characterIsForwardSlash($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
-          $this->state = self::STATE_FIRST_FORWARD_SLASH;
+          $this->state = TokenizerState::FIRST_FORWARD_SLASH;
         } else if ($this->characterIsDoubleQuote($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = '';
-          $this->state = self::STATE_DOUBLE_QUOTED_STRING;
+          $this->state = TokenizerState::DOUBLE_QUOTED_STRING;
         } else if ($this->characterIsBacktick($character)) {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = '';
-          $this->state = self::STATE_BACKTICK_STRING;
+          $this->state = TokenizerState::BACKTICK_STRING;
         } else {
           $this->startLine = $this->line;
           $this->startColumn = $this->column;
           $this->contentString = $character;
-          $this->state = self::STATE_TOKEN;
+          $this->state = TokenizerState::TOKEN;
         }
 
         $this->raw = $character;
         break;
 
-      case self::STATE_WHITE_SPACE:
+      case TokenizerState::WHITE_SPACE:
         if ($this->characterIsWhiteSpace($character)) {
           $this->contentString .= $character;
         } else {
           $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
         break;
 
-      case self::STATE_TOKEN:
+      case TokenizerState::TOKEN:
         if ($this->characterIsWhiteSpace($character) || $this->characterIsSymbol($character) || $this->characterIsSingleQuote($character) || $this->characterIsForwardSlash($character) || $this->characterIsDoubleQuote($character) || $this->characterIsBacktick($character)) {
           $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
         } else {
           $this->contentString .= $character;
         }
         break;
 
-      case self::STATE_FIRST_SINGLE_QUOTE:
+      case TokenizerState::FIRST_SINGLE_QUOTE:
         if ($this->characterIsSingleQuote($character)) {
-          $this->state = self::STATE_SECOND_SINGLE_QUOTE;
+          $this->state = TokenizerState::SECOND_SINGLE_QUOTE;
         } else {
-          $this->state = self::STATE_SINGLE_QUOTED_STRING;
+          $this->state = TokenizerState::SINGLE_QUOTED_STRING;
           $this->contentString = '';
           $this->advanceParserState($character);
         }
         break;
 
-      case self::STATE_SECOND_SINGLE_QUOTE:
+      case TokenizerState::SECOND_SINGLE_QUOTE:
         if ($this->characterIsSingleQuote($character)) {
           $this->contentArray = [];
           $this->indentation = 0;
           $this->leastIndentation = null;
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         } else {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '', substr($this->raw, 0, -1));
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
         break;
 
-      case self::STATE_SINGLE_QUOTED_STRING:
+      case TokenizerState::SINGLE_QUOTED_STRING:
         if ($this->characterIsSingleQuote($character)) {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
         } else if ($this->characterIsBackslash($character)) {
-          $this->state = self::STATE_SINGLE_QUOTED_STRING_BACKSLASH;
+          $this->state = TokenizerState::SINGLE_QUOTED_STRING_BACKSLASH;
         } else {
           $this->contentString .= $character;
         }
         break;
 
-      case self::STATE_SINGLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::SINGLE_QUOTED_STRING_BACKSLASH:
         if (!$this->characterIsSingleQuote($character)) {
           $this->contentString .= '\\';
         }
 
         $this->contentString .= $character;
 
-        $this->state = self::STATE_SINGLE_QUOTED_STRING;
+        $this->state = TokenizerState::SINGLE_QUOTED_STRING;
         break;
 
-      case self::STATE_DOUBLE_QUOTED_STRING:
+      case TokenizerState::DOUBLE_QUOTED_STRING:
         if ($this->characterIsBackslash($character)) {
-          $this->state = self::STATE_DOUBLE_QUOTED_STRING_BACKSLASH;
+          $this->state = TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH;
         } else if ($this->characterIsDoubleQuote($character)) {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
           $this->contentString .= $character;
         }
         break;
 
-      case self::STATE_DOUBLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH:
         if (! $this->characterIsDoubleQuote($character)) {
           $this->contentString .= '\\';
         }
 
         $this->contentString .= $character;
-        $this->state = self::STATE_DOUBLE_QUOTED_STRING;
+        $this->state = TokenizerState::DOUBLE_QUOTED_STRING;
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING:
+      case TokenizerState::TRIPLE_QUOTED_STRING:
         if ($this->characterIsSingleQuote($character)) {
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE;
         } else if ($this->characterIsBackslash($character)) {
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH;
         } else {
           $this->contentArray []= $character;
         }
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH:
         if ($this->characterIsCarriageReturn($character)) {
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN;
         } else if ($this->characterIsNewLine($character)) {
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         } else {
           $this->contentArray []= $character;
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
+      case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
         if (! $this->characterIsLineFeed($character)) {
           $this->contentArray []= $character;
         }
 
-        $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+        $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
+      case TokenizerState::TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
         if ($this->characterIsSingleQuote($character)) {
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE;
         } else {
           $this->contentArray []= '\'';
           $this->contentArray []= $character;
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
+      case TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
         if ($this->characterIsSingleQuote($character)) {
           $contentArray = $this->contentArray;
           $contentArray = $this->removeLeadingBlankLines($contentArray);
@@ -580,38 +496,38 @@ class Tokenizer
             $contentString = implode('', $contentArray);
           }
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $contentString, $this->raw);
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
           $this->contentArray []= '\'\'';
           $this->contentArray []= $character;
-          $this->state = self::STATE_TRIPLE_QUOTED_STRING;
+          $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
 
-      case self::STATE_BACKTICK_STRING:
+      case TokenizerState::BACKTICK_STRING:
         if ($this->characterIsBacktick($character)) {
           $this->target->token(TokenType::BACKTICK_STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $this->contentString, $this->raw);
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
           $this->contentString .= $character;
         }
         break;
 
-      case self::STATE_FIRST_FORWARD_SLASH:
+      case TokenizerState::FIRST_FORWARD_SLASH:
         if ($this->characterIsForwardSlash($character)) {
           $this->contentString = '';
-          $this->state = self::STATE_LINE_COMMENT;
+          $this->state = TokenizerState::LINE_COMMENT;
         } else {
           $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->startLine, $this->startColumn, '/', substr($this->raw, 0, -1));
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
         }
         break;
 
-      case self::STATE_LINE_COMMENT:
+      case TokenizerState::LINE_COMMENT:
         if ($this->characterIsNewLine($character)) {
           $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, substr($this->raw, 0, -1));
-          $this->state = self::STATE_BETWEEN_TOKENS;
+          $this->state = TokenizerState::BETWEEN_TOKENS;
           $this->advanceParserState($character);
         } else {
           $this->contentString .= $character;
@@ -668,70 +584,70 @@ class Tokenizer
   public function endOfFile()
   {
     switch ($this->state) {
-      case self::STATE_BETWEEN_TOKENS:
+      case TokenizerState::BETWEEN_TOKENS:
         break;
 
-      case self::STATE_WHITE_SPACE:
+      case TokenizerState::WHITE_SPACE:
         $this->target->token(TokenType::WHITE_SPACE, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
 
-      case self::STATE_TOKEN:
+      case TokenizerState::TOKEN:
         $this->target->token(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
 
-      case self::STATE_FIRST_SINGLE_QUOTE:
+      case TokenizerState::FIRST_SINGLE_QUOTE:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_SECOND_SINGLE_QUOTE:
+      case TokenizerState::SECOND_SINGLE_QUOTE:
         $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '', $this->raw);
         break;
 
-      case self::STATE_SINGLE_QUOTED_STRING:
+      case TokenizerState::SINGLE_QUOTED_STRING:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_SINGLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::SINGLE_QUOTED_STRING_BACKSLASH:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_DOUBLE_QUOTED_STRING:
+      case TokenizerState::DOUBLE_QUOTED_STRING:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_DOUBLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING:
+      case TokenizerState::TRIPLE_QUOTED_STRING:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH:
+      case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
+      case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
+      case TokenizerState::TRIPLE_QUOTED_STRING_FIRST_SINGLE_QUOTE:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
+      case TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_BACKTICK_STRING:
+      case TokenizerState::BACKTICK_STRING:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_FIRST_FORWARD_SLASH:
+      case TokenizerState::FIRST_FORWARD_SLASH:
         $this->target->token(TokenType::UNKNOWN, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->raw, $this->raw);
         break;
 
-      case self::STATE_LINE_COMMENT:
+      case TokenizerState::LINE_COMMENT:
         $this->target->token(TokenType::LINE_COMMENT, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, $this->contentString, $this->raw);
         break;
     }
