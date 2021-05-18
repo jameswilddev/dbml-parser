@@ -57,7 +57,7 @@ class Tokenizer
   private $contentArray;
 
   /**
-   * @var boolean $encounteredNonWhiteSpace True when non-white-space characters have been encountered on the current line, else, false.
+   * @var boolean $encounteredNonWhiteSpace True when non-white-space characters have been encountered on the current line, otherwise, false.
    */
   private $encounteredNonWhiteSpace = false;
 
