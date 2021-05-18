@@ -159,70 +159,70 @@ final class LogParserTarget implements ParserTarget
   /**
    * Handle the declaration of a foreign key constraint.
    *
-   * @param string $referencingTableNameOrAlias The name or an alias of the table which contains the referencing column.
-   * @param integer $referencingTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the referencing column started.
-   * @param integer $referencingTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the referencing column started.
-   * @param integer $referencingTableNameOrAliasEndLine The line number on which the name or an alias of the table which contains the referencing column ended.
-   * @param integer $referencingTableNameOrAliasEndColumn The column number on which the name or an alias of the table which contains the referencing column ended.
-   * @param string $referencingColumnName The name of the column which contains references.
-   * @param integer $referencingColumnNameStartLine The line number on which the column which contains references started.
-   * @param integer $referencingColumnNameStartColumn The column number on which the column which contains references started.
-   * @param integer $referencingColumnNameEndLine The line number on which the column which contains references ended.
-   * @param integer $referencingColumnNameEndColumn The column number on which the column which contains references ended.
-   * @param string $referencedTableNameOrAlias The name or an alias of the table which contains the column to be referred to.
-   * @param integer $referencedTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the column to be referred to started.
-   * @param integer $referencedTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the column to be referred to started.
-   * @param integer $referencedTableNameOrAliasEndLine The line number on which the name or an alias of the table which contains the column to be referred to ended.
-   * @param integer $referencedTableNameOrAliasEndColumn The column number on which the name or an alias of the table which contains the column to be referred to ended.
-   * @param string $referencedColumnName The name of the column which contains values to be referred to.
-   * @param integer $referencedColumnNameStartLine The line number on which the name of the column which contains values to be referred to started.
-   * @param integer $referencedColumnNameStartColumn The column number on which the name of the column which contains values to be referred to started.
-   * @param integer $referencedColumnNameEndLine The line number on which the name of the column which contains values to be referred to ended.
-   * @param integer $referencedColumnNameEndColumn The column number on which the name of the column which contains values to be referred to ended.
+   * @param string $firstTableNameOrAlias The name or an alias of the table which contains the first column.
+   * @param integer $firstTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the first column started.
+   * @param integer $firstTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the first column started.
+   * @param integer $firstTableNameOrAliasEndLine The line number on which the name or an alias of the table which contains the first column ended.
+   * @param integer $firstTableNameOrAliasEndColumn The column number on which the name or an alias of the table which contains the first column ended.
+   * @param string $firstColumnName The name of the column which contains references.
+   * @param integer $firstColumnNameStartLine The line number on which the column which contains references started.
+   * @param integer $firstColumnNameStartColumn The column number on which the column which contains references started.
+   * @param integer $firstColumnNameEndLine The line number on which the column which contains references ended.
+   * @param integer $firstColumnNameEndColumn The column number on which the column which contains references ended.
+   * @param string $secondTableNameOrAlias The name or an alias of the table which contains the column to be referred to.
+   * @param integer $secondTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the column to be referred to started.
+   * @param integer $secondTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the column to be referred to started.
+   * @param integer $secondTableNameOrAliasEndLine The line number on which the name or an alias of the table which contains the column to be referred to ended.
+   * @param integer $secondTableNameOrAliasEndColumn The column number on which the name or an alias of the table which contains the column to be referred to ended.
+   * @param string $secondColumnName The name of the column which contains values to be referred to.
+   * @param integer $secondColumnNameStartLine The line number on which the name of the column which contains values to be referred to started.
+   * @param integer $secondColumnNameStartColumn The column number on which the name of the column which contains values to be referred to started.
+   * @param integer $secondColumnNameEndLine The line number on which the name of the column which contains values to be referred to ended.
+   * @param integer $secondColumnNameEndColumn The column number on which the name of the column which contains values to be referred to ended.
    */
   public function foreignKeyConstraint(
-    $referencingTableNameOrAlias,
-    $referencingTableNameOrAliasStartLine,
-    $referencingTableNameOrAliasStartColumn,
-    $referencingTableNameOrAliasEndLine,
-    $referencingTableNameOrAliasEndColumn,
-    $referencingColumnName,
-    $referencingColumnNameStartLine,
-    $referencingColumnNameStartColumn,
-    $referencingColumnNameEndLine,
-    $referencingColumnNameEndColumn,
-    $referencedTableNameOrAlias,
-    $referencedTableNameOrAliasStartLine,
-    $referencedTableNameOrAliasStartColumn,
-    $referencedTableNameOrAliasEndLine,
-    $referencedTableNameOrAliasEndColumn,
-    $referencedColumnName,
-    $referencedColumnNameStartLine,
-    $referencedColumnNameStartColumn,
-    $referencedColumnNameEndLine,
-    $referencedColumnNameEndColumn
+    $firstTableNameOrAlias,
+    $firstTableNameOrAliasStartLine,
+    $firstTableNameOrAliasStartColumn,
+    $firstTableNameOrAliasEndLine,
+    $firstTableNameOrAliasEndColumn,
+    $firstColumnName,
+    $firstColumnNameStartLine,
+    $firstColumnNameStartColumn,
+    $firstColumnNameEndLine,
+    $firstColumnNameEndColumn,
+    $secondTableNameOrAlias,
+    $secondTableNameOrAliasStartLine,
+    $secondTableNameOrAliasStartColumn,
+    $secondTableNameOrAliasEndLine,
+    $secondTableNameOrAliasEndColumn,
+    $secondColumnName,
+    $secondColumnNameStartLine,
+    $secondColumnNameStartColumn,
+    $secondColumnNameEndLine,
+    $secondColumnNameEndColumn
   ) {
     $this->events []= new ForeignKeyConstraintEvent(
-      $referencingTableNameOrAlias,
-      $referencingTableNameOrAliasStartLine,
-      $referencingTableNameOrAliasStartColumn,
-      $referencingTableNameOrAliasEndLine,
-      $referencingTableNameOrAliasEndColumn,
-      $referencingColumnName,
-      $referencingColumnNameStartLine,
-      $referencingColumnNameStartColumn,
-      $referencingColumnNameEndLine,
-      $referencingColumnNameEndColumn,
-      $referencedTableNameOrAlias,
-      $referencedTableNameOrAliasStartLine,
-      $referencedTableNameOrAliasStartColumn,
-      $referencedTableNameOrAliasEndLine,
-      $referencedTableNameOrAliasEndColumn,
-      $referencedColumnName,
-      $referencedColumnNameStartLine,
-      $referencedColumnNameStartColumn,
-      $referencedColumnNameEndLine,
-      $referencedColumnNameEndColumn
+      $firstTableNameOrAlias,
+      $firstTableNameOrAliasStartLine,
+      $firstTableNameOrAliasStartColumn,
+      $firstTableNameOrAliasEndLine,
+      $firstTableNameOrAliasEndColumn,
+      $firstColumnName,
+      $firstColumnNameStartLine,
+      $firstColumnNameStartColumn,
+      $firstColumnNameEndLine,
+      $firstColumnNameEndColumn,
+      $secondTableNameOrAlias,
+      $secondTableNameOrAliasStartLine,
+      $secondTableNameOrAliasStartColumn,
+      $secondTableNameOrAliasEndLine,
+      $secondTableNameOrAliasEndColumn,
+      $secondColumnName,
+      $secondColumnNameStartLine,
+      $secondColumnNameStartColumn,
+      $secondColumnNameEndLine,
+      $secondColumnNameEndColumn
     );
   }
 
