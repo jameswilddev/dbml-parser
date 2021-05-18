@@ -29,7 +29,7 @@ final class TokenizerTest extends TestCase
     $tokenizer = new Tokenizer($logTokenizerTarget);
 
     foreach (str_split(preg_replace("~\r?\n~", $newline, "
-  tokens}can:be-split<by>various[symbols]as(seen)here{or,here''
+  tokens}can:be-split<by>various[symbols]as(seen)here{or,here''or.even.here
 you can also write'single-quoted // strings\\
 with or without backslashes \\\\ for newlines
 (containing them)'or 'single-quote\\d \'strings\' surrounded by white space' like that
@@ -130,7 +130,12 @@ this line contains a fa/ke comment
       new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 57, 2, 57, ',', ','),
       new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 58, 2, 61, 'here', 'here'),
       new TokenEvent(TokenType::STRING_LITERAL, 2, 62, 2, 63, '', '\'\''),
-      new TokenEvent(TokenType::WHITE_SPACE, 2, 64, 2, 64, $newline, $newline),
+      new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 64, 2, 65, 'or', 'or'),
+      new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 66, 2, 66, '.', '.'),
+      new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 67, 2, 70, 'even', 'even'),
+      new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 71, 2, 71, '.', '.'),
+      new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 2, 72, 2, 75, 'here', 'here'),
+      new TokenEvent(TokenType::WHITE_SPACE, 2, 76, 2, 76, $newline, $newline),
       new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 3, 1, 3, 3, 'you', 'you'),
       new TokenEvent(TokenType::WHITE_SPACE, 3, 4, 3, 4, ' ', ' '),
       new TokenEvent(TokenType::KEYWORD_SYMBOL_OR_IDENTIFIER, 3, 5, 3, 7, 'can', 'can'),

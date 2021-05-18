@@ -69,6 +69,7 @@ class CharacterIs
       case '>':
       case '-':
       case ',':
+      case '.':
         return true;
 
       default:
