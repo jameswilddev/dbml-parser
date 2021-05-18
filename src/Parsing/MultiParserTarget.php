@@ -185,7 +185,7 @@ final class MultiParserTarget implements ParserTarget
   }
 
   /**
-   * Handle the declaration of a foreign key constraint.
+   * Handle the declaration of a ref.
    *
    * @param string $firstTableNameOrAlias The name or an alias of the table which contains the first column.
    * @param integer $firstTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the first column started.
@@ -208,7 +208,7 @@ final class MultiParserTarget implements ParserTarget
    * @param integer $secondColumnNameEndLine The line number on which the name of the column which contains values to be referred to ended.
    * @param integer $secondColumnNameEndColumn The column number on which the name of the column which contains values to be referred to ended.
    */
-  public function foreignKeyConstraint(
+  public function ref(
     $firstTableNameOrAlias,
     $firstTableNameOrAliasStartLine,
     $firstTableNameOrAliasStartColumn,
@@ -231,7 +231,7 @@ final class MultiParserTarget implements ParserTarget
     $secondColumnNameEndColumn
   ) {
     foreach ($this->targets as $target) {
-      $target->foreignKeyConstraint(
+      $target->ref(
         $firstTableNameOrAlias,
         $firstTableNameOrAliasStartLine,
         $firstTableNameOrAliasStartColumn,

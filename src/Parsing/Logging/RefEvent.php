@@ -3,9 +3,9 @@
 namespace JamesWildDev\DBMLParser\Parsing\Logging;
 
 /**
- * A record of a foreign key constraint event.
+ * A record of a ref event.
  */
-final class ForeignKeyConstraintEvent
+final class RefEvent
 {
   /**
    * @var string $firstTableNameOrAlias The name or an alias of the table which contains the first column.

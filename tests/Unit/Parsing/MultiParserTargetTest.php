@@ -12,7 +12,7 @@ use JamesWildDev\DBMLParser\Parsing\Logging\ColumnPrimaryKeyEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueNoteEvent;
-use JamesWildDev\DBMLParser\Parsing\Logging\ForeignKeyConstraintEvent;
+use JamesWildDev\DBMLParser\Parsing\Logging\RefEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\IndexEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\LogParserTarget;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableAliasEvent;
@@ -114,23 +114,23 @@ final class MultiParserTargetTest extends TestCase
       52,
       10
     );
-    $multiParserTarget->foreignKeyConstraint(
-      'Test Foreign Key Constraint First Table Name Or Alias',
+    $multiParserTarget->ref(
+      'Test Ref First Table Name Or Alias',
       883,
       632,
       644,
       512,
-      'Test Foreign Key Constraint First Column Name',
+      'Test Ref First Column Name',
       38,
       92,
       25,
       70,
-      'Test Foreign Key Constraint Second Table Name Or Alias',
+      'Test Ref Second Table Name Or Alias',
       104,
       160,
       80,
       98,
-      'Test Foreign Key Constraint Second Column Name',
+      'Test Ref Second Column Name',
       401,
       5022,
       46,
@@ -266,23 +266,23 @@ final class MultiParserTargetTest extends TestCase
         52,
         10
       ),
-      new ForeignKeyConstraintEvent(
-        'Test Foreign Key Constraint First Table Name Or Alias',
+      new RefEvent(
+        'Test Ref First Table Name Or Alias',
         883,
         632,
         644,
         512,
-        'Test Foreign Key Constraint First Column Name',
+        'Test Ref First Column Name',
         38,
         92,
         25,
         70,
-        'Test Foreign Key Constraint Second Table Name Or Alias',
+        'Test Ref Second Table Name Or Alias',
         104,
         160,
         80,
         98,
-        'Test Foreign Key Constraint Second Column Name',
+        'Test Ref Second Column Name',
         401,
         5022,
         46,
