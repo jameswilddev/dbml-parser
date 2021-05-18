@@ -67,7 +67,7 @@ class Tokenizer
   private $raw = '';
 
   /**
-   * @var integer $state The current state (see STATE_*).
+   * @var integer $state The current state (see TokenierState::*).
    */
   private $state = TokenizerState::BETWEEN_TOKENS;
 
