@@ -8,7 +8,7 @@ namespace JamesWildDev\DBMLParser\Tokenization\Logging;
 final class TokenEvent
 {
   /**
-   * @var integer $type The type of the token (see TYPE_*).
+   * @var integer $type The type of the token (see TokenType::*).
    */
   public $type;
 

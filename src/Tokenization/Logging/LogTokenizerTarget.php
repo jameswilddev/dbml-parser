@@ -28,7 +28,7 @@ final class LogTokenizerTarget implements TokenizerTarget
   /**
    * Handle a token.
    *
-   * @param integer $type The type of the token (see TYPE_*).
+   * @param integer $type The type of the token (see TokenType::*).
    * @param integer $startLine The line number on which the token started.
    * @param integer $startColumn The column number on which the token started.
    * @param integer $endLine The line number on which the token ended.
