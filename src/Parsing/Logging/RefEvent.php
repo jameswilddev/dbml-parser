@@ -63,6 +63,11 @@ final class RefEvent
   public $secondTableNameOrAlias;
 
   /**
+   * @var integer $operator The operator of the ref (see RefOperator::*).
+   */
+  public $operator;
+
+  /**
    * @var integer $secondTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the column to be referred to started.
    */
   public $secondTableNameOrAliasStartLine;
@@ -118,6 +123,7 @@ final class RefEvent
    * @param integer $firstColumnNameStartColumn The column number on which the column which contains references started.
    * @param integer $firstColumnNameEndLine The line number on which the column which contains references ended.
    * @param integer $firstColumnNameEndColumn The column number on which the column which contains references ended.
+   * @param integer $operator The operator of the ref (see RefOperator::*).
    * @param string $secondTableNameOrAlias The name or an alias of the table which contains the column to be referred to.
    * @param integer $secondTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the column to be referred to started.
    * @param integer $secondTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the column to be referred to started.
@@ -140,6 +146,7 @@ final class RefEvent
     $firstColumnNameStartColumn,
     $firstColumnNameEndLine,
     $firstColumnNameEndColumn,
+    $operator,
     $secondTableNameOrAlias,
     $secondTableNameOrAliasStartLine,
     $secondTableNameOrAliasStartColumn,
@@ -161,6 +168,7 @@ final class RefEvent
     $this->firstColumnNameStartColumn = $firstColumnNameStartColumn;
     $this->firstColumnNameEndLine = $firstColumnNameEndLine;
     $this->firstColumnNameEndColumn = $firstColumnNameEndColumn;
+    $this->operator = $operator;
     $this->secondTableNameOrAlias = $secondTableNameOrAlias;
     $this->secondTableNameOrAliasStartLine = $secondTableNameOrAliasStartLine;
     $this->secondTableNameOrAliasStartColumn = $secondTableNameOrAliasStartColumn;

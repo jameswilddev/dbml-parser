@@ -132,6 +132,7 @@ interface ParserTarget
    * @param integer $firstColumnNameStartColumn The column number on which the column which contains references started.
    * @param integer $firstColumnNameEndLine The line number on which the column which contains references ended.
    * @param integer $firstColumnNameEndColumn The column number on which the column which contains references ended.
+   * @param integer $operator The operator of the ref (see RefOperator::*).
    * @param string $secondTableNameOrAlias The name or an alias of the table which contains the column to be referred to.
    * @param integer $secondTableNameOrAliasStartLine The line number on which the name or an alias of the table which contains the column to be referred to started.
    * @param integer $secondTableNameOrAliasStartColumn The column number on which the name or an alias of the table which contains the column to be referred to started.
@@ -154,6 +155,7 @@ interface ParserTarget
     $firstColumnNameStartColumn,
     $firstColumnNameEndLine,
     $firstColumnNameEndColumn,
+    $operator,
     $secondTableNameOrAlias,
     $secondTableNameOrAliasStartLine,
     $secondTableNameOrAliasStartColumn,

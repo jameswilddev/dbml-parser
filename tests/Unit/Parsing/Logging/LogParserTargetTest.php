@@ -18,6 +18,7 @@ use JamesWildDev\DBMLParser\Parsing\Logging\LogParserTarget;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableAliasEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableNoteEvent;
+use JamesWildDev\DBMLParser\Parsing\RefOperator;
 use PHPUnit\Framework\TestCase;
 
 final class LogParserTargetTest extends TestCase
@@ -107,6 +108,7 @@ final class LogParserTargetTest extends TestCase
       92,
       25,
       70,
+      RefOperator::ONE_TO_ONE,
       'Test Ref Second Table Name Or Alias',
       104,
       160,
@@ -259,6 +261,7 @@ final class LogParserTargetTest extends TestCase
         92,
         25,
         70,
+        RefOperator::ONE_TO_ONE,
         'Test Ref Second Table Name Or Alias',
         104,
         160,
