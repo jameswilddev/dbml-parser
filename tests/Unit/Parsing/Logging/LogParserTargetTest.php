@@ -11,6 +11,7 @@ use JamesWildDev\DBMLParser\Parsing\Logging\ColumnIncrementEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnNoteEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnNotNullEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnPrimaryKeyEvent;
+use JamesWildDev\DBMLParser\Parsing\Logging\EndOfFileEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueNoteEvent;
@@ -82,6 +83,7 @@ final class LogParserTargetTest extends TestCase
       'Test Column Not Null Table Name',
       'Test Column Not Null Column Name'
     );
+    $logParserTarget->endOfFile(true);
     $logParserTarget->columnConstantDefault(
       'Test Column Constant Default Table Name',
       'Test Column Constant Default Column Name',
@@ -91,6 +93,7 @@ final class LogParserTargetTest extends TestCase
       45,
       78
     );
+    $logParserTarget->endOfFile(false);
     $logParserTarget->columnCalculatedDefault(
       'Test Column Calculated Default Event Table Name',
       'Test Column Calculated Default Event Column Name',
@@ -242,6 +245,7 @@ final class LogParserTargetTest extends TestCase
         'Test Column Not Null Table Name',
         'Test Column Not Null Column Name'
       ),
+      new EndOfFileEvent(true),
       new ColumnConstantDefaultEvent(
         'Test Column Constant Default Table Name',
         'Test Column Constant Default Column Name',
@@ -251,6 +255,7 @@ final class LogParserTargetTest extends TestCase
         45,
         78
       ),
+      new EndOfFileEvent(false),
       new ColumnCalculatedDefaultEvent(
         'Test Column Calculated Default Event Table Name',
         'Test Column Calculated Default Event Column Name',

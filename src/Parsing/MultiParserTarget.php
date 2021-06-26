@@ -345,4 +345,16 @@ final class MultiParserTarget implements ParserTarget
       $target->unknown($tokenEvents);
     }
   }
+
+  /**
+   * Handle the end of the file.
+   *
+   * @param bool $expected True when the end-of-file was expected, otherwise, false.
+   */
+  public function endOfFile($expected)
+  {
+    foreach ($this->targets as $target) {
+      $target->endOfFile($expected);
+    }
+  }
 }

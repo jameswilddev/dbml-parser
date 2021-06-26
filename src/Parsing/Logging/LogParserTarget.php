@@ -305,4 +305,14 @@ final class LogParserTarget implements ParserTarget
   {
     $this->events []= new UnknownEvent($tokenEvents);
   }
+
+  /**
+   * Handle the end of the file.
+   *
+   * @param bool $expected True when the end-of-file was expected, otherwise, false.
+   */
+  public function endOfFile($expected)
+  {
+    $this->events []= new EndOfFileEvent($expected);
+  }
 }

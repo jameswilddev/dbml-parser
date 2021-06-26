@@ -229,4 +229,11 @@ interface ParserTarget
    * @param array $tokenEvents The tokens found.
    */
   public function unknown($tokenEvents);
+
+  /**
+   * Handle the end of the file.
+   *
+   * @param bool $expected True when the end-of-file was expected, otherwise, false.
+   */
+  public function endOfFile($expected);
 }

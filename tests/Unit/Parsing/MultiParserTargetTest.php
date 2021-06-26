@@ -9,6 +9,7 @@ use JamesWildDev\DBMLParser\Parsing\Logging\ColumnIncrementEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnNoteEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnNotNullEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\ColumnPrimaryKeyEvent;
+use JamesWildDev\DBMLParser\Parsing\Logging\EndOfFileEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\EnumValueNoteEvent;
@@ -188,6 +189,7 @@ final class MultiParserTargetTest extends TestCase
       11,
       87
     );
+    $multiParserTarget->endOfFile(true);
     $multiParserTarget->tableNote(
       'Test Table Note Table Name',
       'Test Table Note Content',
@@ -196,6 +198,7 @@ final class MultiParserTargetTest extends TestCase
       44,
       12
     );
+    $multiParserTarget->endOfFile(false);
     $multiParserTarget->column(
       'Test Column Table Name',
       'Test Column Name',
@@ -348,6 +351,7 @@ final class MultiParserTargetTest extends TestCase
         11,
         87
       ),
+      new EndOfFileEvent(true),
       new TableNoteEvent(
         'Test Table Note Table Name',
         'Test Table Note Content',
@@ -356,6 +360,7 @@ final class MultiParserTargetTest extends TestCase
         44,
         12
       ),
+      new EndOfFileEvent(false),
       new ColumnEvent(
         'Test Column Table Name',
         'Test Column Name',
