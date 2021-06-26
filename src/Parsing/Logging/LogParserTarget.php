@@ -295,4 +295,14 @@ final class LogParserTarget implements ParserTarget
   {
     $this->events []= new EnumValueNoteEvent($enumName, $name, $content, $contentStartLine, $contentStartColumn, $contentEndLine, $contentEndColumn);
   }
+
+  /**
+   * Handle an unknown sequence of tokens.
+   *
+   * @param array $tokenEvents The tokens found.
+   */
+  public function unknown($tokenEvents)
+  {
+    $this->events []= new UnknownEvent($tokenEvents);
+  }
 }

@@ -333,4 +333,16 @@ final class MultiParserTarget implements ParserTarget
       $target->enumValueNote($enumName, $name, $content, $contentStartLine, $contentStartColumn, $contentEndLine, $contentEndColumn);
     }
   }
+
+  /**
+   * Handle an unknown sequence of tokens.
+   *
+   * @param array $tokenEvents The tokens found.
+   */
+  public function unknown($tokenEvents)
+  {
+    foreach ($this->targets as $target) {
+      $target->unknown($tokenEvents);
+    }
+  }
 }

@@ -18,8 +18,11 @@ use JamesWildDev\DBMLParser\Parsing\Logging\LogParserTarget;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableAliasEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableEvent;
 use JamesWildDev\DBMLParser\Parsing\Logging\TableNoteEvent;
+use JamesWildDev\DBMLParser\Parsing\Logging\UnknownEvent;
 use JamesWildDev\DBMLParser\Parsing\MultiParserTarget;
 use JamesWildDev\DBMLParser\Parsing\RefOperator;
+use JamesWildDev\DBMLParser\Tokenization\Logging\TokenEvent;
+use JamesWildDev\DBMLParser\Tokenization\TokenType;
 use PHPUnit\Framework\TestCase;
 
 final class MultiParserTargetTest extends TestCase
@@ -203,6 +206,13 @@ final class MultiParserTargetTest extends TestCase
       'Test Column Type',
       'Test Column Size'
     );
+    $multiParserTarget->unknown(
+      [
+        new TokenEvent(TokenType::UNKNOWN, 20, 63, 99, 65, 'Test Unknown Content', 'Test Unknown Raw'),
+        new TokenEvent(TokenType::WHITE_SPACE, 44, 23, 72, 11, 'Test White Space Content', 'Test White Space Raw'),
+        new TokenEvent(TokenType::STRING_LITERAL, 22, 40, 88, 35, 'Test String Literal Content', 'Test String Literal Raw'),
+      ]
+    );
 
     $this->assertEquals([
       new ColumnNoteEvent(
@@ -355,6 +365,13 @@ final class MultiParserTargetTest extends TestCase
         75,
         'Test Column Type',
         'Test Column Size'
+      ),
+      new UnknownEvent(
+        [
+          new TokenEvent(TokenType::UNKNOWN, 20, 63, 99, 65, 'Test Unknown Content', 'Test Unknown Raw'),
+          new TokenEvent(TokenType::WHITE_SPACE, 44, 23, 72, 11, 'Test White Space Content', 'Test White Space Raw'),
+          new TokenEvent(TokenType::STRING_LITERAL, 22, 40, 88, 35, 'Test String Literal Content', 'Test String Literal Raw'),
+        ]
       ),
     ], $targetA->events);
     $this->assertEquals($targetA->events, $targetB->events);

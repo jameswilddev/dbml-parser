@@ -222,4 +222,11 @@ interface ParserTarget
    * @param integer $contentEndColumn The column number on which the note ended.
    */
   public function enumValueNote($enumName, $name, $content, $contentStartLine, $contentStartColumn, $contentEndLine, $contentEndColumn);
+
+  /**
+   * Handle an unknown sequence of tokens.
+   *
+   * @param array $tokenEvents The tokens found.
+   */
+  public function unknown($tokenEvents);
 }
