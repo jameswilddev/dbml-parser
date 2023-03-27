@@ -57,11 +57,6 @@ class Tokenizer
   private $contentArray;
 
   /**
-   * @var boolean $encounteredNonWhiteSpace True when non-white-space characters have been encountered on the current line, otherwise, false.
-   */
-  private $encounteredNonWhiteSpace = false;
-
-  /**
    * @var string $raw The raw characters currently being aggregated (includes white space, delimiters, etc.).
    */
   private $raw = '';
@@ -95,7 +90,7 @@ class Tokenizer
       $character = $characters[$i];
       if (CharacterIs::newLine($character)) {
         return $this->removeLeadingBlankLines(array_slice($characters, $i + 1));
-      } else if (! CharacterIs::whiteSpace($character)) {
+      } else if (!CharacterIs::whiteSpace($character)) {
         return $characters;
       }
     }
@@ -114,7 +109,7 @@ class Tokenizer
       $character = $characters[$i];
       if (CharacterIs::newLine($character)) {
         return $this->removeTrailingBlankLines(array_slice($characters, 0, $i));
-      } else if (! CharacterIs::whiteSpace($character)) {
+      } else if (!CharacterIs::whiteSpace($character)) {
         return $characters;
       }
     }
@@ -145,7 +140,7 @@ class Tokenizer
 
         $indentation = 0;
         $foundNonWhiteSpace = false;
-      } else if (! $foundNonWhiteSpace) {
+      } else if (!$foundNonWhiteSpace) {
         if (CharacterIs::whiteSpace($character)) {
           $indentation++;
         } else {
@@ -175,11 +170,11 @@ class Tokenizer
     foreach ($characters as $character) {
       if (CharacterIs::newLine($character)) {
         $numberOfCharactersStillToRemoveOnThisLine = $numberOfCharactersToRemove;
-        $output []= $character;
+        $output[] = $character;
       } else if ($numberOfCharactersStillToRemoveOnThisLine > 0) {
         $numberOfCharactersStillToRemoveOnThisLine--;
       } else {
-        $output []= $character;
+        $output[] = $character;
       }
     }
 
@@ -194,7 +189,7 @@ class Tokenizer
   private function entirelyWhiteSpace($characters)
   {
     foreach ($characters as $character) {
-      if (! CharacterIs::whiteSpace($character)) {
+      if (!CharacterIs::whiteSpace($character)) {
         return false;
       }
     }
@@ -278,8 +273,6 @@ class Tokenizer
       case TokenizerState::SECOND_SINGLE_QUOTE:
         if (CharacterIs::singleQuote($character)) {
           $this->contentArray = [];
-          $this->indentation = 0;
-          $this->leastIndentation = null;
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         } else {
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->previousLine, $this->previousColumn, '', substr($this->raw, 0, -1));
@@ -321,7 +314,7 @@ class Tokenizer
         break;
 
       case TokenizerState::DOUBLE_QUOTED_STRING_BACKSLASH:
-        if (! CharacterIs::doubleQuote($character)) {
+        if (!CharacterIs::doubleQuote($character)) {
           $this->contentString .= '\\';
         }
 
@@ -335,7 +328,7 @@ class Tokenizer
         } else if (CharacterIs::backslash($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH;
         } else {
-          $this->contentArray []= $character;
+          $this->contentArray[] = $character;
         }
         break;
 
@@ -345,14 +338,14 @@ class Tokenizer
         } else if (CharacterIs::newLine($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         } else {
-          $this->contentArray []= $character;
+          $this->contentArray[] = $character;
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
 
       case TokenizerState::TRIPLE_QUOTED_STRING_BACKSLASH_CARRIAGE_RETURN:
-        if (! CharacterIs::lineFeed($character)) {
-          $this->contentArray []= $character;
+        if (!CharacterIs::lineFeed($character)) {
+          $this->contentArray[] = $character;
         }
 
         $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
@@ -362,8 +355,8 @@ class Tokenizer
         if (CharacterIs::singleQuote($character)) {
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING_SECOND_SINGLE_QUOTE;
         } else {
-          $this->contentArray []= '\'';
-          $this->contentArray []= $character;
+          $this->contentArray[] = '\'';
+          $this->contentArray[] = $character;
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
@@ -383,8 +376,8 @@ class Tokenizer
           $this->target->token(TokenType::STRING_LITERAL, $this->startLine, $this->startColumn, $this->line, $this->column, $contentString, $this->raw);
           $this->state = TokenizerState::BETWEEN_TOKENS;
         } else {
-          $this->contentArray []= '\'\'';
-          $this->contentArray []= $character;
+          $this->contentArray[] = '\'\'';
+          $this->contentArray[] = $character;
           $this->state = TokenizerState::TRIPLE_QUOTED_STRING;
         }
         break;
@@ -428,7 +421,7 @@ class Tokenizer
   private function advanceFilePosition($character)
   {
     // Track the line/column before advancing line position as if the next character ends the token we need to know which character was the last within that token.
-    if (! $this->followingCarriageReturn || ! CharacterIs::newLine($character)) {
+    if (!$this->followingCarriageReturn || !CharacterIs::newLine($character)) {
       $this->previousLine = $this->line;
       $this->previousColumn = $this->column;
     }
